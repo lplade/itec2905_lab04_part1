@@ -25,24 +25,23 @@ def display_intro():
 
 def input_guess():
     """
-    Prompts for user input. Keeps prompting until we get an integer.
+    Prompts for user input.
+    Returns either a valid integer, or None
     :return:
     """
-    while True:
-        guessed_number_string = input("What number am I thinking of? ")
-        # Make sure it's actually an integer
-        try:
-            guessed_number = int(guessed_number_string)
-            break
-        except ValueError:
-            print("That's not an integer!")
-            continue
+    guessed_number_string = input("What number am I thinking of? ")
+    # Make sure it's actually an integer
+    try:
+        guessed_number = int(guessed_number_string)
+    except ValueError:
+        print("That's not an integer!")
+        guessed_number = None
 
     return guessed_number
 
 
 def test_if_in_range(guess_int):
-    if (guess_int >= LOW_END) or (guess_int <=HIGH_END):
+    if (guess_int >= LOW_END) or (guess_int <= HIGH_END):
         return True
     else:
         return False
@@ -69,15 +68,21 @@ def respond_low_high(target_int, guess_int):
 def main():
 
     random_number = generate_random_number(LOW_END, HIGH_END)
+
     display_intro()
 
     while True:
 
-        guessed_number = input_guess()
+        # get a valid integer guess
+        guessed_number = None
+        while guessed_number is None:
+            guessed_number = input_guess()  # stop looping when we have int
+
         if not test_if_in_range(guessed_number):
             print("That is not between " + str(LOW_END) +
                   " and " + str(HIGH_END) + "!")
             continue  # loop to another guess
+
         if not respond_low_high(random_number, guessed_number):
             continue  # keep guessing
         else:
