@@ -5,20 +5,22 @@ import guess
 
 class TestGuessingGame(unittest.TestCase):
 
-    @patch("builtins.input",
-           side_effect=[
-               "0", "1", "147", "-54", "tacos", ""
-           ])
-    @patch("builtins.print")
-    def test_input_guess(self, mock_print, mock_input):
+    def test_input_guess(self):
 
-        return_values = [
-            0, 1, 147, -54, None, None
-        ]
+        input_expected_output = {
+            "0"    : 0,
+            "1"    : 1,
+            "145"  : 145,
+            "-45"  : -45,
+            "4.2"  : None,
+            "tacos": None,
+            ""     : None
+        }
 
-        for test in return_values:
-            guess.input_guess()
-            mock_print.assert_called_with(test)
+        for input_val in input_expected_output.keys():
+            with patch("builtins.input", return_value=input_val) as mock_input:
+                self.assertEqual(guess.input_guess(),
+                                 input_expected_output[input_val])
 
 
 
