@@ -12,10 +12,14 @@ class TestGuessingGame(unittest.TestCase):
     @patch("builtins.print")
     def test_input_guess(self, mock_print, mock_input):
 
-        guess.input_guess()
         return_values = [
             0, 1, 147, -54, None, None
         ]
+
+        for test in return_values:
+            guess.input_guess()
+            mock_print.assert_called_with(test)
+
 
 
 
