@@ -52,24 +52,42 @@ class TestGuessingGame(unittest.TestCase):
             self.assertEqual(guess.test_if_in_range(value, low, high),
                              guess_expected_output[value])
 
-    @patch("guess.generate_random_number", return_value=5)
-    @patch("guess.input_guess", side_effect=["one", "20", "3", "7", "5"])
+    @patch("builtins.input", side_effect=["one", "20", "3", "7", "5"])
     @patch("builtins.print")
-    def test_play_a_game(self, mock_print, mock_input, mock_random):
+    def test_play_a_game(self, mock_print, mock_input):
         high = 9
         low = 0
+
+        # Save ref
+        random_function = guess.generate_random_number
+
+        # Replace random function with constant
+        guess.generate_random_number = Mock(return_value=5)
+
+        # Run the program
         guess.main(low, high)
 
         mock_input.assert_called_with("What number am I thinking of? ")
 
-        mock_print.assert_any_call("That's not an integer!")
-        mock_print.assert_any_call("That number is not between"
-                                   + str(low) + " and "
-                                   + str(high) + "!")
-        mock_print.assert_any_call("Sorry, your number is too low.")
-        mock_print.assert_any_call("Sorry, your number is too high.")
-        mock_print.assert_any_call("You got it! I picked " +
-                                   str(5))
+        # Get the args sent to mock print()
+        printcalls = mock_print.call_args_list
+
+        # We should get the following outputs in order
+        expected_out_strings = [
+            "That's not an integer!",
+            "That is not between " + str(low) + " and " + str(high) + "!",
+            "Sorry, your number is too low.",
+            "Sorry, your number is too high.",
+            "You got it! I picked " + str(5) + "."
+        ]
+        # Loop over these
+        # i+1 because there's an intro print()
+        for i in range(5):
+            # note the second parameter has to be a tuple
+            self.assertEqual(printcalls[i+1][0], (expected_out_strings[i],))
+
+        # Restore ref
+        guess.generate_random_number = random_function
 
 
 
