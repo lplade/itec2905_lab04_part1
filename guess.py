@@ -7,9 +7,6 @@
 
 import random
 
-# initialize the pseudorandom generator
-random.seed()
-
 LOW_END = 0
 HIGH_END = 9
 
@@ -40,8 +37,8 @@ def input_guess():
     return guessed_number
 
 
-def test_if_in_range(guess_int):
-    if (guess_int >= LOW_END) or (guess_int <= HIGH_END):
+def test_if_in_range(guess_int, low, high):
+    if (guess_int >= low) and (guess_int <= high):
         return True
     else:
         return False
@@ -65,9 +62,11 @@ def respond_low_high(target_int, guess_int):
         return True
 
 
-def main():
+def main(low=LOW_END, high=HIGH_END):
+    # initialize the pseudorandom generator
+    random.seed()
 
-    random_number = generate_random_number(LOW_END, HIGH_END)
+    random_number = generate_random_number(low, high)
 
     display_intro()
 
@@ -78,9 +77,9 @@ def main():
         while guessed_number is None:
             guessed_number = input_guess()  # stop looping when we have int
 
-        if not test_if_in_range(guessed_number):
-            print("That is not between " + str(LOW_END) +
-                  " and " + str(HIGH_END) + "!")
+        if not test_if_in_range(guessed_number, low, high):
+            print("That is not between " + str(low) +
+                  " and " + str(high) + "!")
             continue  # loop to another guess
 
         if not respond_low_high(random_number, guessed_number):
